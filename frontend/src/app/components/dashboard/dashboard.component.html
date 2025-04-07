@@ -1,0 +1,41 @@
+<div class="dashboard-container">
+    <h1>Market Dashboard</h1>
+    
+    <div *ngIf="loading" class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Loading market data...</p>
+    </div>
+    
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+      <button (click)="loadMarketData()" class="btn btn-primary">Retry</button>
+    </div>
+    
+    <div *ngIf="!loading && !error" class="dashboard-content">
+      <!-- Market Index Chart -->
+      <div class="chart-container market-index">
+        <h2>Market Index (S&P 500)</h2>
+        <app-market-index [marketData]="marketIndex"></app-market-index>
+      </div>
+      
+      <!-- Top Movers -->
+      <div class="top-movers-container">
+        <div class="chart-container gainers">
+          <h2>Top Gainers</h2>
+          <app-top-movers [stocks]="topMovers?.gainers" [type]="'gainers'"></app-top-movers>
+        </div>
+        
+        <div class="chart-container losers">
+          <h2>Top Losers</h2>
+          <app-top-movers [stocks]="topMovers?.losers" [type]="'losers'"></app-top-movers>
+        </div>
+      </div>
+      
+      <!-- Portfolio List -->
+      <div class="portfolio-section">
+        <h2>Your Portfolios</h2>
+        <app-portfolio-list></app-portfolio-list>
+      </div>
+    </div>
+  </div>
+  

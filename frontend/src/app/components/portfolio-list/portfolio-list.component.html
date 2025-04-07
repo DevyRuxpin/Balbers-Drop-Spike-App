@@ -1,0 +1,101 @@
+<div class="portfolio-container">
+    <div *ngIf="loading" class="loading-indicator">
+      <div class="spinner"></div>
+    </div>
+    
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+      <button (click)="loadPortfolios()" class="btn btn-sm btn-outline">Retry</button>
+    </div>
+    
+    <!-- Create Portfolio Form -->
+    <div class="create-portfolio">
+      <h3>Create New Portfolio</h3>
+      <form [formGroup]="portfolioForm" (ngSubmit)="createPortfolio()">
+        <div class="form-group">
+          <input 
+            type="text" 
+            formControlName="name" 
+            placeholder="Portfolio Name" 
+            class="form-control"
+          >
+          <button 
+            type="submit" 
+            [disabled]="portfolioForm.invalid || loading" 
+            class="btn btn-primary"
+          >
+            Create
+          </button>
+        </div>
+      </form>
+    </div>
+    
+    <!-- Portfolio List -->
+    <div class="portfolios-list">
+      <h3>Your Portfolios</h3>
+      
+      <div *ngIf="portfolios.length === 0 && !loading" class="no-portfolios">
+        <p>You don't have any portfolios yet. Create one to get started!</p>
+      </div>
+      
+      <div *ngIf="portfolios.length > 0" class="portfolio-cards">
+        <div 
+          *ngFor="let portfolio of portfolios" 
+          class="portfolio-card"
+          [class.selected]="selectedPortfolio?.id === portfolio.id"
+          (click)="selectPortfolio(portfolio)"
+        >
+          <div class="portfolio-header">
+            <h4>{{ portfolio.name }}</h4>
+            <button 
+              class="btn btn-danger btn-sm" 
+              (click)="deletePortfolio(portfolio.id); $event.stopPropagation();"
+            >
+              Delete
+            </button>
+          </div>
+          
+          <div class="portfolio-stocks">
+            <p *ngIf="portfolio.stocks.length === 0" class="no-stocks">
+              No stocks in this portfolio
+            </p>
+            
+            <ul *ngIf="portfolio.stocks.length > 0">
+              <li *ngFor="let stock of portfolio.stocks">
+                {{ stock.symbol }}
+                <button 
+                  class="btn btn-danger btn-xs" 
+                  (click)="removeStockFromPortfolio(portfolio.id, stock.id); $event.stopPropagation();"
+                >
+                  ✕
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Add Stock Form (only visible when portfolio selected) -->
+    <div *ngIf="selectedPortfolio" class="add-stock">
+      <h3>Add Stock to "{{ selectedPortfolio.name }}"</h3>
+      <form [formGroup]="stockForm" (ngSubmit)="addStockToPortfolio()">
+        <div class="form-group">
+          <input 
+            type="text" 
+            formControlName="symbol" 
+            placeholder="Stock Symbol (e.g. AAPL)" 
+            class="form-control"
+          >
+          <button 
+            type="submit" 
+            [disabled]="stockForm.invalid || loading" 
+            class="btn btn-primary"
+          >
+            Add Stock
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  

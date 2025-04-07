@@ -1,0 +1,29 @@
+<div class="chart-wrapper">
+    <canvas #topMoversChart (ready)="createChart($event)"></canvas>
+    
+    <div *ngIf="!stocks || stocks.length === 0" class="no-data">
+      <p>No data available</p>
+    </div>
+    
+    <div *ngIf="stocks && stocks.length > 0" class="stock-list">
+      <table>
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th>Price</th>
+            <th>Change %</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let stock of stocks" (click)="viewStockDetails(stock.symbol)">
+            <td>{{stock.symbol}}</td>
+            <td>${{stock.price}}</td>
+            <td [ngClass]="{'positive': +stock.change_percent > 0, 'negative': +stock.change_percent < 0}">
+              {{stock.change_percent}}%
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
