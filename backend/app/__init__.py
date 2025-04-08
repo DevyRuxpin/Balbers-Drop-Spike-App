@@ -11,18 +11,22 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
     
-    # Render-specific DB fix
+    # Your original URI fix (preserved)
     if app.config['SQLALCHEMY_DATABASE_URI'].startswith("postgres://"):
         app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI'].replace("postgres://", "postgresql://", 1)
     
-    db.init_app(app)
-    jwt.init_app(app)
-    CORS(app)
-    
-    from app.routes import main_bp
-    from app.auth import auth_bp
-    
-    app.register_blueprint(main_bp)
-    app.register_blueprint(auth_bp)
+    # Added explicit app context
+    with app.app_context():
+        db.init_app(app)
+        jwt.init_app(app)
+        CORS(app)
+        
+        # Your original blueprints
+        app.register_blueprint(main_bp)
+        app.register_blueprint(auth_bp)
+        
+        # New for Render: ensures tables exist
+        db.create_all()
     
     return app
+
